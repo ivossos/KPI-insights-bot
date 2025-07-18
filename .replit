@@ -16,7 +16,7 @@ run = ["python3", "main.py"]
 deploymentTarget = "cloudrun"
 
 [workflows]
-runButton = "Fixed Dashboard v2"
+runButton = "Emergency Dashboard"
 
 [[workflows.workflow]]
 name = "IA Fiscal App"
@@ -71,6 +71,15 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "streamlit run streamlit_dashboard.py --server.port=8501 --server.address=0.0.0.0 --server.headless=true --server.enableCORS=false --server.enableXsrfProtection=false --server.enableWebsocketCompression=false --server.maxUploadSize=1"
+
+[[workflows.workflow]]
+name = "Emergency Dashboard"
+author = 29295454
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "streamlit run emergency_dashboard.py --server.port=8501 --server.address=0.0.0.0 --server.headless=true --server.runOnSave=false --server.enableWebsocketCompression=false --server.enableStaticServing=false"
 
 [[ports]]
 localPort = 8000
