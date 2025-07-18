@@ -36,6 +36,15 @@ mode = "sequential"
 task = "shell.exec"
 args = "python run_dashboard_only.py"
 
+[[workflows.workflow]]
+name = "Simple Dashboard"
+author = 29295454
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "streamlit run simple_streamlit.py --server.port=8501 --server.address=0.0.0.0 --server.headless=true"
+
 [[ports]]
 localPort = 8000
 externalPort = 80
