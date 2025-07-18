@@ -118,16 +118,30 @@ class IAFiscalCapivariApp:
 def run_streamlit_dashboard():
     """Run the Streamlit dashboard"""
     import subprocess
+    import os
     
     dashboard_path = Path(__file__).parent / "src" / "dashboard" / "main.py"
+    
+    # Set environment variables for Streamlit
+    env = os.environ.copy()
+    env.update({
+        'STREAMLIT_SERVER_PORT': '8501',
+        'STREAMLIT_SERVER_ADDRESS': '0.0.0.0',
+        'STREAMLIT_SERVER_HEADLESS': 'true',
+        'STREAMLIT_BROWSER_GATHER_USAGE_STATS': 'false'
+    })
     
     cmd = [
         "streamlit", "run", str(dashboard_path),
         "--server.port=8501",
-        "--server.address=0.0.0.0"
+        "--server.address=0.0.0.0",
+        "--server.headless=true",
+        "--browser.gatherUsageStats=false",
+        "--server.enableCORS=true",
+        "--server.enableXsrfProtection=false"
     ]
     
-    subprocess.run(cmd)
+    subprocess.run(cmd, env=env)
 
 def run_api_only():
     """Run only the API server"""
@@ -187,8 +201,24 @@ def main():
         api_thread = threading.Thread(target=run_api_only, daemon=True)
         api_thread.start()
         
-        # Give API time to start
-        time.sleep(2)
+        # Give API more time to start and be ready
+        logger.info("Waiting for API to start...")
+        time.sleep(5)
+        
+        # Verify API is running before starting dashboard
+        import requests
+        for attempt in range(10):
+            try:
+                response = requests.get("http://0.0.0.0:8000/health", timeout=2)
+                if response.status_code == 200:
+                    logger.info("API is ready, starting dashboard...")
+                    break
+            except:
+                if attempt < 9:
+                    logger.info(f"API not ready yet, waiting... (attempt {attempt + 1}/10)")
+                    time.sleep(2)
+                else:
+                    logger.warning("API health check failed, starting dashboard anyway...")
         
         # Run dashboard in main thread
         run_streamlit_dashboard()

@@ -1,42 +1,52 @@
+
 #!/usr/bin/env python3
 """
-Run just the Streamlit dashboard for Replit
+Run only the Streamlit dashboard
 """
 
-import os
-import sys
 import subprocess
+import sys
+import os
 from pathlib import Path
 
-# Set up paths
-workspace_dir = Path("/home/runner/workspace")
-src_dir = workspace_dir / "src"
+def main():
+    """Run dashboard only"""
+    print("🌐 Starting IA Fiscal Capivari Dashboard...")
+    
+    # Add src to path
+    sys.path.insert(0, str(Path(__file__).parent / "src"))
+    
+    dashboard_path = Path(__file__).parent / "src" / "dashboard" / "main.py"
+    
+    # Set environment variables
+    env = os.environ.copy()
+    env.update({
+        'STREAMLIT_SERVER_PORT': '8501',
+        'STREAMLIT_SERVER_ADDRESS': '0.0.0.0',
+        'STREAMLIT_SERVER_HEADLESS': 'true',
+        'STREAMLIT_BROWSER_GATHER_USAGE_STATS': 'false'
+    })
+    
+    cmd = [
+        "streamlit", "run", str(dashboard_path),
+        "--server.port=8501",
+        "--server.address=0.0.0.0",
+        "--server.headless=true",
+        "--browser.gatherUsageStats=false",
+        "--server.enableCORS=true",
+        "--server.enableXsrfProtection=false",
+        "--logger.level=info"
+    ]
+    
+    print(f"📂 Dashboard path: {dashboard_path}")
+    print(f"🚀 Command: {' '.join(cmd)}")
+    
+    try:
+        subprocess.run(cmd, env=env, check=True)
+    except KeyboardInterrupt:
+        print("\n🛑 Dashboard stopped")
+    except Exception as e:
+        print(f"❌ Dashboard error: {e}")
 
-# Change to src directory
-os.chdir(str(src_dir))
-
-# Add to Python path
-sys.path.insert(0, str(src_dir))
-os.environ["PYTHONPATH"] = str(src_dir)
-
-print("🚀 Starting IA Fiscal Capivari Dashboard...")
-print(f"📁 Working directory: {os.getcwd()}")
-
-# Run Streamlit
-dashboard_path = src_dir / "dashboard" / "main.py"
-
-cmd = [
-    sys.executable, "-m", "streamlit", "run", str(dashboard_path),
-    "--server.port=8501",
-    "--server.address=0.0.0.0",
-    "--server.headless=true",
-    "--server.enableCORS=false",
-    "--server.enableXsrfProtection=false"
-]
-
-try:
-    subprocess.run(cmd)
-except KeyboardInterrupt:
-    print("\n👋 Dashboard stopped")
-except Exception as e:
-    print(f"❌ Error: {e}")
+if __name__ == "__main__":
+    main()
