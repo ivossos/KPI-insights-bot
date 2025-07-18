@@ -99,6 +99,15 @@ mode = "sequential"
 task = "shell.exec"
 args = "python basic_server.py"
 
+[[workflows.workflow]]
+name = "Web Scraper"
+author = 29295454
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python simple_web_scraper.py"
+
 [[ports]]
 localPort = 8000
 externalPort = 80
