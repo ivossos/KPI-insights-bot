@@ -1,5 +1,6 @@
 import jwt
 import bcrypt
+import os
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
 from fastapi import HTTPException, Depends, status
@@ -14,22 +15,34 @@ from ...monitoring.logger import logger
 
 
 class AuthManager:
-    def __init__(self, secret_key: str, algorithm: str = "HS256"):
+    def __init__(self, secret_key: str, algorithm: str = "HS256", use_firebase: bool = False):
         self.secret_key = secret_key
         self.algorithm = algorithm
         self.security = HTTPBearer()
         self.firebase_app = None
-        self._init_firebase()
+        self.use_firebase = use_firebase
+        
+        if self.use_firebase:
+            self._init_firebase()
 
     def _init_firebase(self):
         try:
             if not firebase_admin._apps:
-                cred = credentials.Certificate("path/to/serviceAccountKey.json")
-                self.firebase_app = firebase_admin.initialize_app(cred)
+                # Try to initialize with service account key if available
+                service_key_path = "serviceAccountKey.json"
+                if os.path.exists(service_key_path):
+                    cred = credentials.Certificate(service_key_path)
+                    self.firebase_app = firebase_admin.initialize_app(cred)
+                    logger.info("Firebase initialized with service account key")
+                else:
+                    # Initialize without credentials for development
+                    logger.warning("Firebase service account key not found, initializing without credentials")
+                    self.firebase_app = None
             else:
                 self.firebase_app = firebase_admin.get_app()
         except Exception as e:
             logger.error(f"Failed to initialize Firebase: {e}")
+            self.firebase_app = None
 
     def hash_password(self, password: str) -> str:
         return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
@@ -80,6 +93,12 @@ class AuthManager:
 
     def verify_firebase_token(self, token: str) -> Dict[str, Any]:
         try:
+            if self.firebase_app is None:
+                logger.warning("Firebase not initialized, skipping token verification")
+                raise HTTPException(
+                    status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                    detail="Firebase authentication not available"
+                )
             decoded_token = auth.verify_id_token(token)
             return decoded_token
         except Exception as e:
