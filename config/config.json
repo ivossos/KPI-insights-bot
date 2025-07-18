@@ -1,0 +1,43 @@
+{
+  "thresholds": {
+    "overpricing_percentage": 30,
+    "split_order_threshold": 8000,
+    "supplier_concentration_threshold": 0.7,
+    "emergency_recurrence_days": 30,
+    "payroll_variation_threshold": 0.2
+  },
+  "schedule": {
+    "scraping_time": "06:00",
+    "etl_time": "07:00",
+    "alert_processing_time": "08:00",
+    "notification_time": "09:00",
+    "weekly_digest_day": "monday",
+    "weekly_digest_time": "10:00"
+  },
+  "betha_portals": {
+    "folha_url": "https://folha.betha.cloud/",
+    "despesas_url": "https://despesas.betha.cloud/",
+    "contratos_url": "https://contratos.betha.cloud/"
+  },
+  "claude_settings": {
+    "model": "claude-3-sonnet-20240229",
+    "max_tokens": 1000,
+    "temperature": 0.3
+  },
+  "data_storage": {
+    "raw_data_path": "data/raw",
+    "processed_data_path": "data/processed",
+    "alerts_data_path": "data/alerts",
+    "partition_by": ["year", "month"]
+  },
+  "notification_settings": {
+    "email": {
+      "enabled": true,
+      "smtp_server": "smtp.gmail.com",
+      "smtp_port": 587
+    },
+    "telegram": {
+      "enabled": true
+    }
+  }
+}

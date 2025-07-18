@@ -1,0 +1,67 @@
+{
+  "name": "betha-portals-scraper",
+  "version": "1.0.0",
+  "description": "Apify Actor for scraping Betha municipal transparency portals",
+  "main": "apify_actor.js",
+  "scripts": {
+    "start": "node apify_actor.js",
+    "test": "jest",
+    "lint": "eslint .",
+    "build": "echo 'No build step required'"
+  },
+  "dependencies": {
+    "apify": "^3.1.0",
+    "puppeteer": "^21.0.0",
+    "node-fetch": "^3.3.0"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "eslint": "^8.0.0"
+  },
+  "keywords": [
+    "apify",
+    "scraping",
+    "transparency",
+    "betha",
+    "municipal",
+    "capivari"
+  ],
+  "author": "IA Fiscal Capivari Team",
+  "license": "MIT",
+  "apify": {
+    "actorSpecification": 1,
+    "name": "betha-portals-scraper",
+    "title": "Betha Portals Scraper",
+    "description": "Scrapes CSV data from Betha municipal transparency portals (folha, despesas, contratos)",
+    "version": "1.0.0",
+    "meta": {
+      "templateId": "javascript-node"
+    },
+    "input": {
+      "title": "Scraper Input",
+      "description": "Configuration for the Betha portals scraper",
+      "type": "object",
+      "schemaVersion": 1,
+      "properties": {
+        "portals": {
+          "title": "Portals to scrape",
+          "type": "array",
+          "description": "List of portals to scrape",
+          "items": {
+            "type": "string",
+            "enum": ["folha", "despesas", "contratos"]
+          },
+          "default": ["folha", "despesas", "contratos"]
+        },
+        "maxRetries": {
+          "title": "Max retries",
+          "type": "integer",
+          "description": "Maximum number of retry attempts per portal",
+          "minimum": 1,
+          "maximum": 5,
+          "default": 3
+        }
+      }
+    }
+  }
+}

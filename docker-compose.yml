@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  kpi-bot:
+    build: .
+    ports:
+      - "8000:8000"
+      - "8502:8502"
+    environment:
+      - PYTHONPATH=/app
+      - ENVIRONMENT=production
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./chroma_db:/app/chroma_db
+      - ./reports:/app/reports
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - kpi-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - kpi-network
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=kpi_bot
+      - POSTGRES_USER=kpi_user
+      - POSTGRES_PASSWORD=kpi_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+    networks:
+      - kpi-network
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - kpi-bot
+    restart: unless-stopped
+    networks:
+      - kpi-network
+
+volumes:
+  redis_data:
+  postgres_data:
+
+networks:
+  kpi-network:
+    driver: bridge
