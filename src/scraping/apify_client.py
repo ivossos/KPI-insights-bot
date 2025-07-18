@@ -14,7 +14,7 @@ class ApifyClientManager:
     
     def __init__(self):
         self.client = ApifyClient(settings.apify_api_token)
-        self.actor_id = "betha-portals-scraper"  # Your actor ID
+        self.actor_id = "your_username/betha-portals-scraper"  # Replace with your actual actor ID from Apify Console
         self.default_input = {
             "portals": ["folha", "despesas", "contratos"],
             "maxRetries": 3
