@@ -25,7 +25,16 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python main.py --mode=api"
+args = "python main.py --mode=full"
+
+[[workflows.workflow]]
+name = "Dashboard Only"
+author = 29295454
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python run_dashboard_only.py"
 
 [[ports]]
 localPort = 8000
