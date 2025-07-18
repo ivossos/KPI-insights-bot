@@ -45,6 +45,15 @@ mode = "sequential"
 task = "shell.exec"
 args = "streamlit run simple_streamlit.py --server.port=8501 --server.address=0.0.0.0 --server.headless=true"
 
+[[workflows.workflow]]
+name = "Reliable Dashboard"
+author = 29295454
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "streamlit run streamlit_dashboard.py --server.port=8501 --server.address=0.0.0.0 --server.headless=true --server.enableCORS=false --server.enableXsrfProtection=false"
+
 [[ports]]
 localPort = 8000
 externalPort = 80
