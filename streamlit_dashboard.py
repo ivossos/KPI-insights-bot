@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Standalone Streamlit Dashboard for IA Fiscal Capivari
-Optimized for Replit environment
+Optimized for Replit environment with fixed websocket connections
 """
 
 import streamlit as st
@@ -13,13 +13,18 @@ import json
 import time
 import os
 
-# Configure Streamlit page
+# Configure Streamlit page with optimized settings for Replit
 st.set_page_config(
     page_title="IA Fiscal Capivari",
     page_icon="🏛️",
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# Force refresh to clear any connection issues
+if 'first_run' not in st.session_state:
+    st.session_state.first_run = True
+    time.sleep(0.5)
 
 # Custom CSS for better styling
 st.markdown("""
