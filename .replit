@@ -16,7 +16,7 @@ run = ["python3", "main.py"]
 deploymentTarget = "cloudrun"
 
 [workflows]
-runButton = "Reliable Dashboard"
+runButton = "Fixed Dashboard"
 
 [[workflows.workflow]]
 name = "IA Fiscal App"
@@ -53,6 +53,15 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "streamlit run streamlit_dashboard.py --server.port=8501 --server.address=0.0.0.0 --server.headless=true --server.enableCORS=false --server.enableXsrfProtection=false"
+
+[[workflows.workflow]]
+name = "Fixed Dashboard"
+author = 29295454
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "streamlit run streamlit_dashboard.py --server.port=8501 --server.address=0.0.0.0 --server.headless=true --server.enableCORS=false --server.enableXsrfProtection=false --server.enableWebsocketCompression=false"
 
 [[ports]]
 localPort = 8000
