@@ -42,10 +42,6 @@ class IAFiscalCapivariApp:
         self.logger.info("Starting IA Fiscal Capivari application")
         
         try:
-            # Setup signal handlers
-            signal.signal(signal.SIGINT, self._signal_handler)
-            signal.signal(signal.SIGTERM, self._signal_handler)
-            
             # Start background services
             self._start_background_services()
             
@@ -177,6 +173,14 @@ def main():
         # Update uvicorn config - would need to modify the server startup
         pass
         
+    # Setup signal handlers only in main thread
+    def signal_handler(signum, frame):
+        logger.info(f"Received signal {signum}, shutting down gracefully")
+        sys.exit(0)
+    
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+    
     # Run based on mode
     if args.mode == "full":
         # Run both API and dashboard
