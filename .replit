@@ -1,58 +1,15 @@
+entrypoint = "main.py"
+modules = ["python-3.11"]
+
 [nix]
-channel = "stable-22_11"
+channel = "stable-24_05"
 
-[deployment]
-run = ["python", "main_replit.py"]
-deploymentTarget = "cloudrun"
-
-[[ports]]
-localPort = 8000
-externalPort = 80
-
-[[ports]]
-localPort = 8501
-externalPort = 3000
-
-[env]
-PYTHONPATH = "/home/runner/ia-fiscal-capivari/src"
-PYTHONUNBUFFERED = "1"
-REPL_SLUG = "ia-fiscal-capivari"
-REPL_OWNER = "your-username"
+[unitTest]
+language = "python3"
 
 [gitHubImport]
-requiredFiles = [".replit", "replit.nix", "requirements.txt"]
+requiredFiles = [".replit", "replit.nix"]
 
-[languages]
-
-[languages.python3]
-pattern = "**/*.py"
-
-[languages.python3.languageServer]
-start = "pylsp"
-
-[languages.javascript]
-pattern = "**/{*.js,*.jsx,*.ts,*.tsx,*.json}"
-
-[languages.javascript.languageServer]
-start = "typescript-language-server --stdio"
-
-[workflows]
-runButton = "Run IA Fiscal"
-
-[[workflows.workflow]]
-name = "Run IA Fiscal"
-author = 29295454
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python3 main_replit.py"
-
-[[workflows.workflow]]
-name = "KPI Dashboard Only"
-author = 29295454
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python3 -m streamlit run src/kpi_bot/dashboard/kpi_dashboard.py --server.port=8501 --server.address=0.0.0.0"
+[deployment]
+run = ["python3", "main.py"]
+deploymentTarget = "cloudrun"
